@@ -43,7 +43,7 @@ export async function getAllRecords(
 }
 
 // Creates a record in the DB
-export async function createRecords(
+export async function createOneRecord(
   model: typeof BaseEntity,
   data: any
 ){
@@ -132,7 +132,7 @@ export async function deleteRecords(
 }
 
 // Updates or upserts records
-export async function updateRecords(
+export async function updateRecord(
   model: typeof BaseEntity,
   query: any,
   update: any,
@@ -140,13 +140,13 @@ export async function updateRecords(
 ){
   try {
     if (upsert) {
-      const newData = await model.upsert(update, query);
+      const newData = await model.upsert(query, update)
       return newData;
     }
     const newData = await model.update(query, update);
     return newData;
   } catch (err) {
-    logger.error("ERROR in updateRecords", err);
+    logger.error("ERROR in updateRecord", err);
     throw err;
   }
 }

@@ -2,12 +2,14 @@
  * File contains the controller of authentication and authorization
  */
 
-import fastify, { FastifyReply, FastifyRequest, FastifyInstance } from "fastify";
+import { FastifyReply, FastifyRequest, FastifyInstance } from "fastify";
 import { isInvalid } from "../utils/util";
-import { createRecord, findOne, findOneAndUpdate } from "../utils/dbUtil";
 import { OAuth2Client } from 'google-auth-library'
 import bcrypt from 'bcryptjs';
 import { HTTP_STATUS_CODE, HTTP_STATUS_MESSAGES } from "../utils/httpUtils";
+import { createOneRecord, getSingleRecord, updateRecord } from "../utils/sql/sqlUtils";
+import { User } from "../entities/User";
+import { FindOneOptions } from "typeorm";
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export const loginWithEmailAndPassword = async (req: FastifyRequest, reply: FastifyReply) => {
@@ -20,7 +22,11 @@ export const loginWithEmailAndPassword = async (req: FastifyRequest, reply: Fast
             return reply.code(HTTP_STATUS_CODE.BAD_REQUEST).send({ status: HTTP_STATUS_MESSAGES.BAD_REQUEST, message: "Invalid Fields Found!" });
         }
 
-        const existingUser = await findOne(req.server, 'users', { email });
+        const query: FindOneOptions<User> = {
+          where: { email }
+        }
+        const existingUser: Partial<User> = await getSingleRecord(User, query);
+
         if(isInvalid(existingUser)) {
             req.server.log.error("User with email does not exists. Returning not found!");
             return reply.code(HTTP_STATUS_CODE.NOT_FOUND).send({ status: HTTP_STATUS_MESSAGES.NOT_FOUND, message: 'User Not Found' });
@@ -33,7 +39,7 @@ export const loginWithEmailAndPassword = async (req: FastifyRequest, reply: Fast
             return reply.code(HTTP_STATUS_CODE.FORBIDDEN).send({ status: HTTP_STATUS_MESSAGES.FORBIDDEN, message: "Invalid Credentials!" });
         }
 
-        const { accessToken, refreshToken } = generateTokens({userId: existingUser._id.toString(), role: existingUser.role }, req.server);
+        const { accessToken, refreshToken } = generateTokens({userId: existingUser.id.toString(), role: existingUser.role }, req.server);
 
         reply
         .setCookie('token', accessToken, {
@@ -78,7 +84,11 @@ export const signUpWithEmailAndPassword = async (req: FastifyRequest<{ Body: Sig
 
         const { email, password, userName, role, firstName, lastName } = req.body;
         
-        const existingUser = await findOne(req.server, 'users', { email });
+        const query: FindOneOptions<User> = {
+          where: { email }
+        }
+
+        const existingUser: Partial<User> = await getSingleRecord(User, query);
 
         if(!isInvalid(existingUser)) {
 
@@ -94,15 +104,16 @@ export const signUpWithEmailAndPassword = async (req: FastifyRequest<{ Body: Sig
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-
-        const newUser = await createRecord(req.server, 'users', { 
+        const newUser = await createOneRecord(User, { 
             firstName, lastName, email, userName, role, password: hashedPassword
         });
 
         req.server.log.info("User created. Generating access and refresh token.");
 
-        const { accessToken, refreshToken } = generateTokens({ userId: newUser.insertedId.toString(), role }, req.server);
-        await findOneAndUpdate(req.server, 'users', { email }, { refreshToken })
+        const { accessToken, refreshToken } = generateTokens({ userId: newUser.id, role }, req.server);
+
+        const updateQuery = { email }
+        await updateRecord(User, updateQuery, { refreshToken });
         
         reply
         .setCookie('token', accessToken, {
@@ -190,7 +201,11 @@ export const googleAuthLogin = async (req: FastifyRequest,reply: FastifyReply) =
     });
 
     logger.info('Checking for the existing user.');
-    const existingUser = await findOne(req.server, 'users', { googleId: sub });
+
+    const query: FindOneOptions<User> = {
+      where: { googleId: sub }
+    }
+    const existingUser: Partial<User> = await getSingleRecord(User, query);
 
     if (isInvalid(existingUser)) {
       logger.info('User not found. Creating new user.');
@@ -205,13 +220,16 @@ export const googleAuthLogin = async (req: FastifyRequest,reply: FastifyReply) =
 
       let username = baseUsername;
 
-      while (await findOne(req.server, 'users', { userName: username })) {
+      const userNameQuery: FindOneOptions<User> = {
+        where: { userName: username }
+      }
+      while (await getSingleRecord(User, userNameQuery)) {
           username = `${baseUsername}${Math.floor(1000 + Math.random() * 9000)}`; // Add a random 4-digit number
       }
 
       const defaultUserName =  username;
 
-      const newUser = await createRecord(req.server, 'users', {
+      const newUser = await createOneRecord(User, {
         firstName: given_name,
         lastName: family_name || '',
         email: email,
@@ -225,11 +243,12 @@ export const googleAuthLogin = async (req: FastifyRequest,reply: FastifyReply) =
       logger.info('User created. Generating the access and refresh token.');
 
       const { accessToken, refreshToken } = generateTokens(
-        {userId: newUser.insertedId.toString(), role: 'student'},
+        { userId: newUser.id, role: 'student' },
         req.server
       );
 
-      await findOneAndUpdate(req.server, 'users', { email }, { refreshToken });
+      const query = { email }
+      await updateRecord(User, query, { refreshToken });
 
       reply.setCookie('jwtToken', accessToken, {
         maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -276,10 +295,11 @@ export const googleAuthLogin = async (req: FastifyRequest,reply: FastifyReply) =
       }
 
       const { accessToken, refreshToken } = generateTokens(
-        { userId: existingUser._id.toString(), role: existingUser.role }, req.server
+        { userId: existingUser.id.toString(), role: existingUser.role }, req.server
       );
 
-      await findOneAndUpdate(req.server, 'users', { email }, { refreshToken })
+      const query = { email }
+      await updateRecord(User, query, { refreshToken })
 
       reply.setCookie('jwtToken', accessToken, {
         maxAge: 7 * 24 * 60 * 60 * 1000,
