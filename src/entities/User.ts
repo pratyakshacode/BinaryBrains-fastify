@@ -13,11 +13,17 @@ export enum UserRole {
 
 @Entity() 
 export class User extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   id!: number;
 
   @Column({ type: 'varchar', length: 100 })
-  name!: string;
+  firstName: string;
+
+  @Column({ type: 'varchar', length: 100 })
+  lastName: string;
+
+  @Column() 
+  userName: string
 
   @Column({ type: 'varchar', length: 150, unique: true })
   email!: string;
@@ -25,13 +31,22 @@ export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 255 })
   password!: string;
 
+  @Column({ default: '' })
+  avatar!: string;
+
   @Column({ nullable: true, default: UserRole.STUDENT })
-    role: string
+  role: string
 
   @Column({
          nullable:true,
     })
-   token: string
+  token: string
+
+  @Column({ default: '' }) 
+  googleId: string
+
+  @Column({ default: '' })
+  refreshToken: string
 
   @OneToMany(() => UserRoleMap, userRoleMap => userRoleMap.user)
   public userRoleMaps!: UserRoleMap[];
