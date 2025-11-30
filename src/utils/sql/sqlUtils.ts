@@ -5,9 +5,7 @@
 import { BaseEntity, FindManyOptions } from "typeorm";
 import { getCacheData, setCacheData } from '../cache/cacheUtils'; // your NodeCache utils
 import { config } from "../../config/config"; 
-import { getLogger } from "../logger";
-
-const logger = getLogger();
+import { logger } from "../logger";
 
 export async function getAllRecords(
   model: typeof BaseEntity,

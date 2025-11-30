@@ -39,10 +39,15 @@ export const loginWithEmailAndPassword = async (req: FastifyRequest, reply: Fast
             return reply.code(HTTP_STATUS_CODE.FORBIDDEN).send({ status: HTTP_STATUS_MESSAGES.FORBIDDEN, message: "Invalid Credentials!" });
         }
 
-        const { accessToken, refreshToken } = generateTokens({userId: existingUser.id.toString(), role: existingUser.role }, req.server);
+        const { accessToken, refreshToken } = generateTokens({
+          id: existingUser.id.toString(), 
+          role: existingUser.role,
+          organizationId: existingUser?.organization?.id,
+          email: existingUser.email
+        }, req.server);
 
         reply
-        .setCookie('token', accessToken, {
+        .setCookie('jwtToken', accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
@@ -110,7 +115,7 @@ export const signUpWithEmailAndPassword = async (req: FastifyRequest<{ Body: Sig
 
         req.server.log.info("User created. Generating access and refresh token.");
 
-        const { accessToken, refreshToken } = generateTokens({ userId: newUser.id, role }, req.server);
+        const { accessToken, refreshToken } = generateTokens({ id: newUser.id, role, email: newUser.email, organizationId: newUser.organizationId }, req.server);
 
         const updateQuery = { email }
         await updateRecord(User, updateQuery, { refreshToken });
@@ -156,7 +161,7 @@ export const generateTokens = (
   payload: TokenPayload,
   server: FastifyInstance
 ) => {
-  const accessToken = server.jwt.sign(payload, { expiresIn: '15m' });
+  const accessToken = server.jwt.sign(payload, { expiresIn: '7d' });
   const refreshToken = server.jwt.sign(payload, { expiresIn: '7d' });
 
   return { accessToken, refreshToken };
@@ -203,7 +208,10 @@ export const googleAuthLogin = async (req: FastifyRequest,reply: FastifyReply) =
     logger.info('Checking for the existing user.');
 
     const query: FindOneOptions<User> = {
-      where: { googleId: sub }
+      where: { googleId: sub },
+      relations: {
+        organization: true
+      }
     }
     const existingUser: Partial<User> = await getSingleRecord(User, query);
 
@@ -243,7 +251,12 @@ export const googleAuthLogin = async (req: FastifyRequest,reply: FastifyReply) =
       logger.info('User created. Generating the access and refresh token.');
 
       const { accessToken, refreshToken } = generateTokens(
-        { userId: newUser.id, role: 'student' },
+        { 
+          id: newUser.id, 
+          role: 'student',
+          email: newUser.email,
+          organizationId: newUser.organizationId
+        },
         req.server
       );
 
@@ -295,7 +308,12 @@ export const googleAuthLogin = async (req: FastifyRequest,reply: FastifyReply) =
       }
 
       const { accessToken, refreshToken } = generateTokens(
-        { userId: existingUser.id.toString(), role: existingUser.role }, req.server
+        { 
+          id: existingUser.id.toString(), 
+          role: existingUser.role, 
+          email: existingUser.email,  
+          organizationId: existingUser?.organization?.id
+        }, req.server
       );
 
       const query = { email }

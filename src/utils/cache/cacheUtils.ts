@@ -3,9 +3,7 @@
 */
 
 import NodeCache from "node-cache";
-import { getLogger } from "../logger";
-
-const logger = getLogger();
+import { logger } from "../logger";
 
 const localCache = new NodeCache({ stdTTL: 3600 });
 

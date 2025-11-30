@@ -2,8 +2,10 @@
  * File contains the types to be used all over the app
  */
 interface TokenPayload {
-    userId: string;
+    id: string;
     role: string;
+    email: string;
+    organizationId: string;
 }
 
 interface SignUpBody {
