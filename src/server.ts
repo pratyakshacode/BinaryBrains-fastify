@@ -1,5 +1,6 @@
 import app from "./app";
 import { connectDB } from "./config/database";
+import { logger } from "./utils/logger";
 
 const PORT = parseInt(process.env.PORT) || 3002;
 
@@ -8,9 +9,9 @@ const startServer = async () => {
     try {
         await connectDB(app); // connect to sql database
         await app.listen({ port: PORT });
-        app.log.info(`Fastify Server Of Binary Brains Running On PORT : ${PORT}`);
+        logger.info(`Fastify Server Of Binary Brains Running On PORT : ${PORT}`);
     } catch (error) {
-        app.log.error(`Error While Initializing Fastify Server: ${error.message}`);
+        logger.error(`Error While Initializing Fastify Server: ${error.message}`);
         process.exit(1);
     }
 };

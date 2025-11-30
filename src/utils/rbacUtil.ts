@@ -7,12 +7,9 @@
 import { Policy } from "../entities/Policy";
 import { config } from "../config/config";
 import { getCacheData, setCacheData } from "./cache/cacheUtils";
-import { getLogger } from "./logger";
 import { getAllRecordsWithFilter } from "./sql/sqlUtils";
 import { RBAC_POLICY_MAP_CACHE_KEY } from "./cache/cacheKeys";
-
-const logger = getLogger();
-
+import { logger } from "./logger";
 export interface Role {
   name: string;
 }

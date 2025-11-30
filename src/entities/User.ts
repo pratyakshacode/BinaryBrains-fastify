@@ -1,31 +1,39 @@
-/**
- * User class to store the information of the user to the mysql
- */
-
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, BaseEntity, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+  Index
+} from 'typeorm';
 import { UserRoleMap } from './UserRoleMap';
+import { Organization } from './Organization';
+import { AuditBaseEntityWithoutOrg } from './AuditBaseEntity';
 
 export enum UserRole {
-    ADMIN = "admin",
-    STUDENT = "student",
-    TRAINER = "trainer",
+  ADMIN = "admin",
+  STUDENT = "student",
+  TRAINER = "trainer",
 }
 
-@Entity() 
-export class User extends BaseEntity {
+@Entity()
+@Index(['email', 'organization'])
+export class User extends AuditBaseEntityWithoutOrg {
+  
   @PrimaryGeneratedColumn("uuid")
-  id!: number;
+  id!: string;
 
   @Column({ type: 'varchar', length: 100 })
-  firstName: string;
+  firstName!: string;
 
   @Column({ type: 'varchar', length: 100 })
-  lastName: string;
+  lastName!: string;
 
-  @Column() 
-  userName: string
+  @Column()
+  userName!: string;
 
-  @Column({ type: 'varchar', length: 150, unique: true })
+  @Column({ type: 'varchar', length: 150})
   email!: string;
 
   @Column({ type: 'varchar', length: 255 })
@@ -34,29 +42,30 @@ export class User extends BaseEntity {
   @Column({ default: '' })
   avatar!: string;
 
-  @Column({ nullable: true, default: UserRole.STUDENT })
-  role: string
-
   @Column({
-         nullable:true,
-    })
-  token: string
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.STUDENT
+  })
+  role!: UserRole;
 
-  @Column({ default: '' }) 
-  googleId: string
+  @Column({ nullable: true })
+  token!: string;
+
+  @ManyToOne(() => Organization, (org) => org.users)
+  @JoinColumn({ }) 
+  organization!: Organization;
 
   @Column({ default: '' })
-  refreshToken: string
+  googleId!: string;
 
-  @OneToMany(() => UserRoleMap, userRoleMap => userRoleMap.user)
-  public userRoleMaps!: UserRoleMap[];
+  @Column({ type: 'longtext' })
+  refreshToken: string;
+
+  @OneToMany(() => UserRoleMap, (userRoleMap) => userRoleMap.user)
+  userRoleMaps!: UserRoleMap[];
 
   @Column({ type: 'boolean', default: true })
   isActive!: boolean;
 
-  @CreateDateColumn({ type: 'timestamp' })
-  createdAt!: Date;
-
-  @UpdateDateColumn({ type: 'timestamp' })
-  updatedAt!: Date;
 }

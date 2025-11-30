@@ -11,24 +11,23 @@ import dotenv from 'dotenv';
 import helloWorldRouter from './routes/helloWorldRouter';
 import authRouter from './routes/authRouter';
 import mongoosePlugin from './plugins/mongoose';
-import { initLogger } from './utils/logger';
 
 dotenv.config();
 const app = Fastify({ logger: true });
-
-// initialize logger here
-initLogger(app);
 
 import { permissionRoutes } from './routes/permissionRouter';
 import { policyRoutes } from './routes/policyRouter';
 import { roleRoutes } from './routes/roleRouter';
 import { resourceRoutes } from './routes/resourceRouter';
 import { scopeRoutes } from './routes/scopeRouter';
+import { courseAdminRouter } from './routes/course/courseAdminRouter';
+import { organizationRouter } from './routes/organizationRouter';
 
 
 // registering cors to get the requests.
 app.register(fastifyCors, {
-    origin: true
+    origin: true,
+    credentials: true
 });
 
 // Register mongoose plugin
@@ -45,7 +44,11 @@ app.register(fastifyCookie);
 
 // registering jwt
 app.register(fastifyJwt, {
-    secret: process.env.JWT_SECRET
+    secret: process.env.JWT_SECRET,
+    cookie: {
+        cookieName: 'jwtToken',
+        signed: false
+    }
 });
 
 // ALL ROUTES WILL COME HERE
@@ -57,9 +60,7 @@ app.register(policyRoutes, { prefix: '/api/policy' });
 app.register(roleRoutes, { prefix: '/api/role' });
 app.register(resourceRoutes, { prefix: '/api/resource'});
 app.register(scopeRoutes, { prefix: '/api/scope' });
-
-
-
-
+app.register(courseAdminRouter, { prefix: '/api/admin/course'})
+app.register(organizationRouter, { prefix: '/api/organization'})
 
 export default app; 

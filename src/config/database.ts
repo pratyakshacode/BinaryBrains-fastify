@@ -6,10 +6,9 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import dotenv from 'dotenv';
 import { FastifyInstance } from "fastify";
-import { getLogger } from "../utils/logger";
+import { logger } from "../utils/logger";
 
 dotenv.config();
-const logger = getLogger();
 
 // export const AppDataSource = new DataSource({
 //   type: "mysql",
