@@ -22,6 +22,7 @@ import { resourceRoutes } from './routes/resourceRouter';
 import { scopeRoutes } from './routes/scopeRouter';
 import { courseAdminRouter } from './routes/course/courseAdminRouter';
 import { organizationRouter } from './routes/organizationRouter';
+import { articleRouter } from './routes/articleRouter';
 
 
 // registering cors to get the requests.
@@ -53,7 +54,8 @@ app.register(fastifyJwt, {
 
 // ALL ROUTES WILL COME HERE
 app.register(helloWorldRouter, { prefix : '/api/helloWorld' });
-app.register(authRouter, { prefix: '/api/auth' })
+app.register(authRouter, { prefix: '/api/auth' });
+
 // RBAC ROUTES
 app.register(permissionRoutes, { prefix: '/api/permission' });
 app.register(policyRoutes, { prefix: '/api/policy' });
@@ -62,5 +64,9 @@ app.register(resourceRoutes, { prefix: '/api/resource'});
 app.register(scopeRoutes, { prefix: '/api/scope' });
 app.register(courseAdminRouter, { prefix: '/api/admin/course'})
 app.register(organizationRouter, { prefix: '/api/organization'})
+
+// RESOURCES ROUTES
+app.register(articleRouter, { prefix: '/api/article' });
+
 
 export default app; 
