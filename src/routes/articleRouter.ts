@@ -23,6 +23,8 @@ import { createArticle } from "../controllers/article/createArticle";
 import { authMiddleware } from "../middlewares/auth/authMiddleware";
 import { getArticle } from "../controllers/article/getArticle";
 import { getAllArticles } from "../controllers/article/getAllArticles";
+import { updateArticle } from "../controllers/article/updateArticle";
+import { deleteArticle } from "../controllers/article/deleteArticle";
 
 export const articleRouter = (fastify: FastifyInstance) => {
 
@@ -35,10 +37,16 @@ export const articleRouter = (fastify: FastifyInstance) => {
 
     // Route to get all articles with optional pagination and filtering.
     fastify.get('/', getAllArticles);
-    
+
     // Route to get a single article by its ID.
     fastify.get('/:articleId', getArticle);
 
     // Route to create a new article. The request body should contain title, description, and content of the article.
     fastify.post('/', createArticle);
+
+    // Route to update an existing article by its ID. The request body should contain the updated title, description, and content of the article.
+    fastify.patch('/:articleId', updateArticle);
+
+    // Router to delete an existing article by its ID. The article ID should be passed as a URL parameter.
+    fastify.delete('/:articleId', deleteArticle);
 }

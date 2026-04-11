@@ -27,6 +27,9 @@ export class Article extends BaseEntity {
   @Column({ type: 'text' })
   content!: string;
 
+  @Column({ type: 'boolean', default: false })
+  isDeleted!: boolean;
+
   @Column({ 
     type: 'enum', 
     enum: ['draft', 'published', 'archived'],

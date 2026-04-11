@@ -10,6 +10,7 @@ import { HTTP_STATUS_CODE, HTTP_STATUS_MESSAGES } from "../utils/httpUtils";
 import { createOneRecord, getSingleRecord, updateRecord } from "../utils/sql/sqlUtils";
 import { User } from "../entities/User";
 import { FindOneOptions } from "typeorm";
+import { logger } from "../utils/logger";
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 export const loginWithEmailAndPassword = async (req: FastifyRequest, reply: FastifyReply) => {
@@ -170,7 +171,6 @@ export const generateTokens = (
 export const googleAuthLogin = async (req: FastifyRequest,reply: FastifyReply) => {
   try {
 
-    const logger = req.server.log;
     logger.info('Logging in user using google.');
 
     const { token } = req.body as { token: string };

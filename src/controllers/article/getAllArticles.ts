@@ -16,7 +16,9 @@ export const getAllArticles = async (req: FastifyRequest, reply: FastifyReply) =
 
         const title = (req.query as any).title || "";
 
-        const articleQuery: any = {}
+        const articleQuery: any = {
+            isDeleted: false
+        }
 
         if(!isInvalid(title)) {
             articleQuery.title = Like(`%${title}%`);
