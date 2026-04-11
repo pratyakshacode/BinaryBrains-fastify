@@ -65,7 +65,7 @@ export const assignOwnerToOrganization = async (req: FastifyRequest, reply: Fast
 
         logger.info("Checking whether the user is a part of the organization.");
 
-        const filter = { 
+        const filter: any = { 
             organization: { id: organizationId },
             user: { id: ownerId }
         }

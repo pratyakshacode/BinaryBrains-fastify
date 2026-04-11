@@ -33,6 +33,7 @@ import { Role } from '../entities/Role';
 import { Permission } from '../entities/Permission';
 import { Resource } from '../entities/Resource';
 import { Scope } from '../entities/Scope';
+import { logger } from '../utils/logger';
 
 
 /**
@@ -447,8 +448,8 @@ export async function createAccessControl(ac: AccessControl, userId: string, req
 
     return newPolicy;
 
-  } catch (error) {
-    request.server.log.error("Error in createAccessControl", error);
+  } catch (error: any) {
+    logger.error("Error in createAccessControl", error);
     throw new Error("Failed to create policy.");
   }
 }
@@ -508,8 +509,8 @@ export async function deleteAccessControl(ac: AccessControl, userId: string, req
 
     return result;
 
-  } catch (error) {
-    request.server.log.error("Error in deleteAccessControl", error);
+  } catch (error: any) {
+    logger.error("Error in deleteAccessControl", error);
     throw new Error("Failed to delete policy.");
   }
 }

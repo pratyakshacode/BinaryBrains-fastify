@@ -28,7 +28,8 @@ import { articleRouter } from './routes/articleRouter';
 // registering cors to get the requests.
 app.register(fastifyCors, {
     origin: true,
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS']
 });
 
 // Register mongoose plugin
@@ -67,6 +68,5 @@ app.register(organizationRouter, { prefix: '/api/organization'})
 
 // RESOURCES ROUTES
 app.register(articleRouter, { prefix: '/api/article' });
-
 
 export default app; 
