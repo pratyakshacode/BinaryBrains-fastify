@@ -1,15 +1,10 @@
 {
   "include": ["src/**/*"],
   "compilerOptions": {
-  
-     "lib": [
-        "es2021",
-        "es5",
-        "es6",
-     ],
-     "target": "es6",
-     "module": "commonjs",
-     "moduleResolution": "node",
+     "lib": ["es2022"],              // Fastify runs on modern Node, so you can use modern features
+     "target": "es2022",             // Compiles to modern JS supported by current Node versions
+     "module": "Node16",             // Matches modern Node's module system
+     "moduleResolution": "Node16",   // The fix for your deprecation warning
      "outDir": "dist",
      "rootDir": "src",
      "emitDecoratorMetadata": true,
@@ -21,5 +16,5 @@
      "types": ["node"],
      "typeRoots": ["./src/types", "./node_modules/@types"]
   },
-  "exclude": ["node_modules", "external"]
+  "exclude": ["node_modules", "dist"]
 }

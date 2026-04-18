@@ -26,7 +26,7 @@ export const loginWithEmailAndPassword = async (req: FastifyRequest, reply: Fast
         const query: FindOneOptions<User> = {
           where: { email }
         }
-        const existingUser: Partial<User> = await getSingleRecord(User, query);
+        const existingUser: any = await getSingleRecord(User, query);
 
         if(isInvalid(existingUser)) {
             req.server.log.error("User with email does not exists. Returning not found!");
@@ -77,24 +77,24 @@ export const loginWithEmailAndPassword = async (req: FastifyRequest, reply: Fast
             }
         })
     
-    } catch (error) {
+    } catch (error: any) {
         req.server.log.error(`Error in loginWithEmailAndPassword: ${error.message}`);
         return reply.code(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).send({ status: HTTP_STATUS_MESSAGES.INTERNAL_SERVER_ERROR, message: "Something went wrong. Please contact Admin!" });
     }
 }
 
-export const signUpWithEmailAndPassword = async (req: FastifyRequest<{ Body: SignUpBody }>, reply: FastifyReply) => {
+export const signUpWithEmailAndPassword = async (req: FastifyRequest<{ Body: any }>, reply: FastifyReply) => {
     try {
         
         req.server.log.info("Signing up user with email and password");
 
-        const { email, password, userName, role, firstName, lastName } = req.body;
+        const { email, password, userName, role, firstName, lastName } = req.body as { email: string, password: string, userName: string, role: string, firstName: string, lastName: string};
         
         const query: FindOneOptions<User> = {
           where: { email }
         }
 
-        const existingUser: Partial<User> = await getSingleRecord(User, query);
+        const existingUser: Partial<User> = await getSingleRecord(User, query) as Partial<User>;
 
         if(!isInvalid(existingUser)) {
 
@@ -150,7 +150,7 @@ export const signUpWithEmailAndPassword = async (req: FastifyRequest<{ Body: Sig
             }
         });
         
-    } catch (error) {
+    } catch (error: any) {
         
         req.server.log.error(`Error in ${signUpWithEmailAndPassword.name}: ${error.message}`);
         reply.code(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).send({ status: HTTP_STATUS_MESSAGES.INTERNAL_SERVER_ERROR, message: `Error creating user. Please try after some time: ${error.message}` });
@@ -159,7 +159,7 @@ export const signUpWithEmailAndPassword = async (req: FastifyRequest<{ Body: Sig
 }
 
 export const generateTokens = (
-  payload: TokenPayload,
+  payload: any,
   server: FastifyInstance
 ) => {
   const accessToken = server.jwt.sign(payload, { expiresIn: '7d' });
@@ -213,7 +213,7 @@ export const googleAuthLogin = async (req: FastifyRequest,reply: FastifyReply) =
         organization: true
       }
     }
-    const existingUser: Partial<User> = await getSingleRecord(User, query);
+    const existingUser: Partial<User> = await getSingleRecord(User, query) as Partial<User>;
 
     if (isInvalid(existingUser)) {
       logger.info('User not found. Creating new user.');
@@ -309,7 +309,7 @@ export const googleAuthLogin = async (req: FastifyRequest,reply: FastifyReply) =
 
       const { accessToken, refreshToken } = generateTokens(
         { 
-          id: existingUser.id.toString(), 
+          id: existingUser.id!.toString(), 
           role: existingUser.role, 
           email: existingUser.email,  
           organizationId: existingUser?.organization?.id
@@ -367,7 +367,7 @@ export const logoutUser = async (req: FastifyRequest, reply: FastifyReply) => {
     reply.clearCookie('refreshToken');
     return reply.code(HTTP_STATUS_CODE.SUCCESS).send({ status: HTTP_STATUS_MESSAGES.ACCEPTED, message: "Logged out successfully!" });
 
-  } catch (error) {
+  } catch (error: any) {
     
     req.server.log.error(`Error in ${logoutUser.name} : ${error.message}`);
     return reply.code(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).send({ status: HTTP_STATUS_MESSAGES.INTERNAL_SERVER_ERROR, message: "Error in logging out user. Please contact admin!" });
