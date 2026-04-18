@@ -5,7 +5,7 @@
 import Fastify from 'fastify';
 import fastifyCors from '@fastify/cors';
 import fastifyMongodb from '@fastify/mongodb';
-import fastifyJwt from '@fastify/jwt';
+import fastifyJwt, { Secret } from '@fastify/jwt';
 import fastifyCookie from '@fastify/cookie';
 import dotenv from 'dotenv';
 import helloWorldRouter from './routes/helloWorldRouter';
@@ -23,13 +23,14 @@ import { scopeRoutes } from './routes/scopeRouter';
 import { courseAdminRouter } from './routes/course/courseAdminRouter';
 import { organizationRouter } from './routes/organizationRouter';
 import { articleRouter } from './routes/articleRouter';
-
+import { sectionRouter } from './routes/sectionRouter';
+import { mcqRouter } from './routes/mcqRouter';
 
 // registering cors to get the requests.
 app.register(fastifyCors, {
     origin: true,
     credentials: true,
-    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS']
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS', 'PUT']
 });
 
 // Register mongoose plugin
@@ -46,7 +47,7 @@ app.register(fastifyCookie);
 
 // registering jwt
 app.register(fastifyJwt, {
-    secret: process.env.JWT_SECRET,
+    secret: process.env.JWT_SECRET as Secret,
     cookie: {
         cookieName: 'jwtToken',
         signed: false
@@ -68,5 +69,7 @@ app.register(organizationRouter, { prefix: '/api/organization'})
 
 // RESOURCES ROUTES
 app.register(articleRouter, { prefix: '/api/article' });
+app.register(mcqRouter, { prefix: '/api/mcq' });
+app.register(sectionRouter, { prefix: '/api/section' });
 
 export default app; 

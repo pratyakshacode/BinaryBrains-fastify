@@ -27,6 +27,9 @@ export class Article extends BaseEntity {
   @Column({ type: 'text' })
   content!: string;
 
+  @Column({ default: false })
+  isPublic!: boolean
+
   @Column({ type: 'boolean', default: false })
   isDeleted!: boolean;
 
