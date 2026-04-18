@@ -42,7 +42,6 @@ export const getMcq = async (req: FastifyRequest, reply: FastifyReply) => {
         await getSingleRecord(SectionResourceMap, sectionResourceMapQuery) as Partial<SectionResourceMap>;
 
         if(!isInvalid(sectionResource)) {
-            console.log("printing section resource", sectionResource);
             mcq['sectionId'] = sectionResource.sectionId
 
             const sectionQuery: FindOneOptions<Section> = {
