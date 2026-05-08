@@ -11,12 +11,14 @@ interface CreateCourseBody {
     type?: CourseType;
     amount?: number;
     tags?: string[];
+    status: CourseStatus,
+    archived: boolean
 }
 
 export const createCourse = async (req: FastifyRequest, reply: FastifyReply) => {
     try {
 
-        const { title, description, type, amount, tags } = req.body as CreateCourseBody;
+        const { title, description, type, amount, tags, status, archived } = req.body as CreateCourseBody;
         
         // Extract the user ID from your JWT middleware
         const userId = (req.user as JwtUser)?.id; 
@@ -44,9 +46,10 @@ export const createCourse = async (req: FastifyRequest, reply: FastifyReply) => 
             type: type || CourseType.FREE,
             amount: amount || 0,
             tags: tags || [],
-            status: CourseStatus.DRAFT, // Always starts as a draft
-            curriculumTree: [],         // Initializes empty
-            instructors: [],            // Initializes empty
+            status: status as CourseStatus,
+            archived,
+            curriculumTree: [],
+            instructors: [],
             createdBy: userId,
             updatedBy: userId
         };

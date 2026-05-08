@@ -5,17 +5,18 @@ import { Mcq } from "../../entities/MCQs";
 
 interface SingleSubmission {
     userAnswers: string[]; // Always an array (handles single, multi, and T/F)
+    resourceId?: string; // Optional: can be used if we want to evaluate based on resourceId instead of mcqId
 }
 
 export const evaluateSingleMcq = async (req: FastifyRequest, reply: FastifyReply) => {
     try {
         const { mcqId } = req.params as { mcqId: string };
-        const { userAnswers } = req.body as SingleSubmission;
+        const { userAnswers, resourceId } = req.body as SingleSubmission;
 
-        if (!mcqId) {
+        if (!mcqId && !resourceId) {
             return reply.status(HTTP_STATUS_CODE.BAD_REQUEST).send({
                 status: HTTP_STATUS_MESSAGES.BAD_REQUEST,
-                message: "MCQ ID is required."
+                message: "MCQ ID or Resource ID is required."
             });
         }
 
@@ -28,7 +29,7 @@ export const evaluateSingleMcq = async (req: FastifyRequest, reply: FastifyReply
 
         // 1. Fetch the master question (which contains the hidden correct answers)
         const question = await Mcq.findOne({
-            where: { id: mcqId, isDeleted: false },
+            where: { id: mcqId || resourceId, isDeleted: false },
             select: ["id", "type", "correctAnswer", "explanation"] 
         });
 

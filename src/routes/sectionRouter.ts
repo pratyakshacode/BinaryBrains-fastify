@@ -7,6 +7,7 @@ import { createSection } from "../controllers/section/createSection";
 import { updateSection } from "../controllers/section/updateSection";
 import { deleteSection } from "../controllers/section/deleteSection";
 import { getPublicSectionsWithResources } from "../controllers/section/getPublicSectionsWithResources";
+import { updateSectionResources } from "../controllers/section/updateSectionResources";
 
 export const sectionRouter = async (fastify: FastifyInstance) => {
     
@@ -26,6 +27,9 @@ export const sectionRouter = async (fastify: FastifyInstance) => {
 
     // update existing section with resources
     fastify.put("/:sectionId", updateSection);
+
+    // update the resources linked to the section
+    fastify.put("/:sectionId/resources", updateSectionResources);
 
     // delete existing section with resources mapping.
     fastify.delete("/:sectionId", deleteSection);
