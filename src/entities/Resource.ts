@@ -5,13 +5,13 @@ import { Policy } from "./Policy"
 @Entity()
 export class Resource extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
-    id: string
+    id!: string
 
     @Column({ unique: true })
-    name: string
+    name!: string
 
     @Column()
-    description: string
+    description!: string
 
     @OneToMany(() => Policy, (policy) => policy.resource)
     public policies!: Policy[]
@@ -20,19 +20,19 @@ export class Resource extends BaseEntity {
         type: "tinyint",
         default: 0,
     })
-    isDeleted: boolean
+    isDeleted!: boolean
 
     @ManyToOne(()=>User, {nullable: true, onDelete: "NO ACTION"})
     @JoinColumn()
-    createdBy: User
+    createdBy!: User
 
     @CreateDateColumn()
-    createdAt: Date
+    createdAt!: Date
 
     @ManyToOne(()=>User, {nullable: true, onDelete: "NO ACTION"})
     @JoinColumn()
-    updatedBy: User
+    updatedBy!: User
 
     @UpdateDateColumn()
-    updatedAt: Date
+    updatedAt!: Date
 }

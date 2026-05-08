@@ -25,6 +25,8 @@ import { organizationRouter } from './routes/organizationRouter';
 import { articleRouter } from './routes/articleRouter';
 import { sectionRouter } from './routes/sectionRouter';
 import { mcqRouter } from './routes/mcqRouter';
+import { resourceRouter } from './routes/resources/resourceRouter';
+import { courseRouter } from './routes/course/courseRouter';
 
 // registering cors to get the requests.
 app.register(fastifyCors, {
@@ -62,7 +64,7 @@ app.register(authRouter, { prefix: '/api/auth' });
 app.register(permissionRoutes, { prefix: '/api/permission' });
 app.register(policyRoutes, { prefix: '/api/policy' });
 app.register(roleRoutes, { prefix: '/api/role' });
-app.register(resourceRoutes, { prefix: '/api/resource'});
+// app.register(resourceRoutes, { prefix: '/api/resource'});
 app.register(scopeRoutes, { prefix: '/api/scope' });
 app.register(courseAdminRouter, { prefix: '/api/admin/course'})
 app.register(organizationRouter, { prefix: '/api/organization'})
@@ -71,5 +73,9 @@ app.register(organizationRouter, { prefix: '/api/organization'})
 app.register(articleRouter, { prefix: '/api/article' });
 app.register(mcqRouter, { prefix: '/api/mcq' });
 app.register(sectionRouter, { prefix: '/api/section' });
+app.register(resourceRouter, { prefix: '/api/resources' })
 
+// PUBLIC COUŘSE ROUTES
+app.register(courseRouter, { prefix: '/api/course' });
+app
 export default app; 
