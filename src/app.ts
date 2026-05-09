@@ -78,4 +78,20 @@ app.register(resourceRouter, { prefix: '/api/resources' })
 // PUBLIC COUŘSE ROUTES
 app.register(courseRouter, { prefix: '/api/course' });
 
-export default app; 
+// --- HEALTH CHECK / ROOT ROUTE ---
+app.get('/', async (request, reply) => {
+    return {
+        name: 'Binary Brains API',
+        status: 'online',
+        message: 'Welcome to the Binary Brains Backend! 🚀',
+        environment: process.env.NODE_ENV || 'development',
+        timestamp: new Date().toISOString()
+    };
+});
+
+app.get('/health', async (request, reply) => {
+    // This is useful for automated pinging services or Railway health checks
+    return reply.status(200).send({ status: 'OK' });
+});
+
+export default app;
