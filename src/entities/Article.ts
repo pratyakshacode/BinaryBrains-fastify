@@ -24,8 +24,8 @@ export class Article extends BaseEntity {
   @Column({ type: 'varchar', length: 500, nullable: true })
   description!: string; 
 
-  @Column({ type: 'text' })
-  content!: string;
+  @Column({ type: 'longtext', nullable: true })
+  content!: string | null;
 
   @Column({ default: false })
   isPublic!: boolean
