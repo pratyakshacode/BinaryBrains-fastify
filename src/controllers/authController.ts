@@ -246,6 +246,7 @@ export const googleAuthLogin = async (req: FastifyRequest,reply: FastifyReply) =
         userName: defaultUserName,
         password: hashedPassword,
         googleId: sub,
+        refreshToken: "default-refresh-token"
       });
 
       logger.info('User created. Generating the access and refresh token.');
