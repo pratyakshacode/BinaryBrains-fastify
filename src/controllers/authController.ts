@@ -51,14 +51,14 @@ export const loginWithEmailAndPassword = async (req: FastifyRequest, reply: Fast
         .setCookie('jwtToken', accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: process.env.ENVIRONMENT === 'production' ? 'none' : 'lax',
         path: '/',
         maxAge: 15 * 60, // 15 minutes
         })
         .setCookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: process.env.ENVIRONMENT === 'production' ? 'none' : 'lax',
         path: '/',
         maxAge: 7 * 24 * 60 * 60, // 7 days
         });
@@ -125,14 +125,14 @@ export const signUpWithEmailAndPassword = async (req: FastifyRequest<{ Body: any
         .setCookie('token', accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: process.env.ENVIRONMENT === 'production' ? 'none' : 'lax',
         path: '/',
         maxAge: 15 * 60, // 15 minutes
         })
         .setCookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: process.env.ENVIRONMENT === 'production' ? 'none' : 'lax',
         path: '/',
         maxAge: 7 * 24 * 60 * 60, // 7 days
         });
@@ -268,7 +268,7 @@ export const googleAuthLogin = async (req: FastifyRequest,reply: FastifyReply) =
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         secure: process.env.ENVIRONMENT === 'production',
-        sameSite: 'lax',
+        sameSite: process.env.ENVIRONMENT === 'production' ? 'none' : 'lax',
         path: '/',
       });
 
@@ -276,7 +276,7 @@ export const googleAuthLogin = async (req: FastifyRequest,reply: FastifyReply) =
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         secure: process.env.ENVIRONMENT === 'production',
-        sameSite: 'lax',
+        sameSite: process.env.ENVIRONMENT === 'production' ? 'none' : 'lax',
         path: '/',
       });
 
@@ -324,7 +324,7 @@ export const googleAuthLogin = async (req: FastifyRequest,reply: FastifyReply) =
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         secure: process.env.ENVIRONMENT === 'production',
-        sameSite: 'lax',
+        sameSite: process.env.ENVIRONMENT === 'production' ? 'none' : 'lax',
         path: '/',
       });
 
@@ -332,7 +332,7 @@ export const googleAuthLogin = async (req: FastifyRequest,reply: FastifyReply) =
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         secure: process.env.ENVIRONMENT === 'production',
-        sameSite: 'lax',
+        sameSite: process.env.ENVIRONMENT === 'production' ? 'none' : 'lax',
         path: '/',
       });
 
