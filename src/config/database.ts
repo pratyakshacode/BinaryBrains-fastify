@@ -27,8 +27,8 @@ dotenv.config();
 export const AppDataSource = new DataSource({
   type: "mysql",
   url: process.env.MYSQL_URL,
-  synchronize: true,
-  logging: true,
+  synchronize: false,
+  logging: false,
   entities: [__dirname + "/../entities/**/*.js"],
 });
 

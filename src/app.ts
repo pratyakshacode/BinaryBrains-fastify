@@ -77,5 +77,5 @@ app.register(resourceRouter, { prefix: '/api/resources' })
 
 // PUBLIC COUŘSE ROUTES
 app.register(courseRouter, { prefix: '/api/course' });
-app
+
 export default app; 
