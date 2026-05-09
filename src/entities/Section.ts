@@ -16,7 +16,7 @@ export class Section extends BaseEntity {
     @Column()
     title!: string
 
-    @Column({ type: 'longtext' })
+    @Column({ type: 'longtext', nullable: true })
     description!: string
     
     @Column({

@@ -59,7 +59,7 @@ export class User extends AuditBaseEntityWithoutOrg {
   @Column({ default: '' })
   googleId!: string;
 
-  @Column({ type: 'longtext' })
+  @Column({ type: 'longtext', nullable: true })
   refreshToken!: string;
 
   @OneToMany(() => UserRoleMap, (userRoleMap) => userRoleMap.user)
