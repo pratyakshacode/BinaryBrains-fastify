@@ -16,7 +16,7 @@ export class Mcq extends BaseEntity {
     @Column()
     title!: string;
 
-    @Column({ type: "longtext", default: "" })
+    @Column({ type: "longtext" })
     explanation!: string;
 
     // ENUM: 'SINGLE_CHOICE', 'MULTI_SELECT', 'TRUE_FALSE'

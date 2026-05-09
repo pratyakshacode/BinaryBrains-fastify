@@ -30,7 +30,7 @@ export class CourseUserMap extends BaseEntity {
     progress!: number;
 
     // Array of resource IDs the user has completed
-    @Column({ type: 'simple-array', default: '' })
+    @Column({ type: 'simple-array' })
     completedResources!: string[];
 
     // Optional relationships if you need to JOIN tables later

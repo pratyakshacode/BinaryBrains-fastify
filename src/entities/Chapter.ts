@@ -19,7 +19,7 @@ export class Chapter extends BaseEntity {
     @Column()
     title!: string;
 
-    @Column({ type: 'longtext', default: "" })
+    @Column({ type: 'longtext' })
     description!: string;
 
     @Column({ type: 'json' })

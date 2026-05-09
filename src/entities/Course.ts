@@ -4,8 +4,11 @@ import {
     Column, 
     BaseEntity, 
     CreateDateColumn, 
-    UpdateDateColumn 
+    UpdateDateColumn, 
+    ManyToOne,
+    JoinColumn
 } from "typeorm";
+import { User } from "./User";
 
 export enum CourseType {
     FREE = 'free',
@@ -41,8 +44,9 @@ export class Course extends BaseEntity {
     @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
     amount!: number;
 
-    @Column({ type: 'simple-array', default: '' })
-    tags!: string[];
+    // FIX: Removed 'default: []' from decorator. Initialized via class property.
+    @Column({ type: 'simple-array' })
+    tags: string[] = [];
 
     @Column({ type: 'enum', enum: CourseStatus, default: CourseStatus.DRAFT })
     status!: CourseStatus;
@@ -56,18 +60,23 @@ export class Course extends BaseEntity {
     @Column({ type: 'float', default: 3.0 })
     rating!: number;
 
+    // FIX: Removed 'default: []' from decorator. MySQL JSON columns can't have defaults.
     @Column({ type: 'json' })
     curriculumTree: any[] = [];
 
-    @Column({ type: 'varchar', nullable: true })
-    createdBy!: string;
+    @ManyToOne(() => User)
+    @JoinColumn({ name: 'createdById' }) 
+    createdBy!: User;
 
-    @Column({ type: 'varchar', nullable: true })
-    updatedBy!: string;
+    @ManyToOne(() => User)
+    @JoinColumn({ name: 'updatedById' }) 
+    updatedBy!: User;
 
+    // FIX: Removed 'default: new Date()'. @CreateDateColumn handles this automatically.
     @CreateDateColumn()
     createdAt!: Date;
 
+    // FIX: Removed 'default: new Date()'. @UpdateDateColumn handles this automatically.
     @UpdateDateColumn()
     updatedAt!: Date;
 }
